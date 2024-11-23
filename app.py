@@ -263,65 +263,6 @@ def unblock_user(user_id):
     flash("User not found.")
     return redirect(url_for("admin_dashboard"))
 
-# @app.route("/admin/block/customer/<int:user_id>")
-# def block_customer(user_id):
-#     user_type = session.get("user_type")
-    
-#     if user_type == "Admin":
-#         customer = Customer.query.get(user_id)
-#         if customer:
-#             customer.blocked = True
-#             db.session.commit()
-#             flash(f"Customer {customer.name} blocked successfully!")
-#             return redirect(url_for("admin_dashboard"))
-        
-#     flash("Customer not found.")
-#     return redirect(url_for("admin_dashboard"))
-
-# @app.route("/admin/unblock/customer/<int:user_id>")
-# def unblock_customer(user_id):
-#     user_type = session.get("user_type")
-    
-#     if user_type == "Admin":
-#         customer = Customer.query.get(user_id)
-#         if customer:
-#             customer.blocked = False
-#             db.session.commit()
-#             flash(f"Customer {customer.name} unblocked successfully!")
-#             return redirect(url_for("admin_dashboard"))
-        
-#     flash("Customer not found.")
-#     return redirect(url_for("admin_dashboard"))
-
-# @app.route("/admin/block/professional/<int:user_id>")
-# def block_professional(user_id):
-#     user_type = session.get("user_type")
-    
-#     if user_type == "Admin":
-#         professional = ServiceProfessional.query.get(user_id)
-#         if professional:
-#             professional.blocked = True
-#             db.session.commit()
-#             flash(f"Professional {professional.name} blocked successfully!")
-#             return redirect(url_for("admin_dashboard"))
-        
-#     flash("Professional not found.")
-#     return redirect(url_for("admin_dashboard"))
-
-# @app.route("/admin/unblock/professional/<int:user_id>")
-# def unblock_professional(user_id):
-#     user_type = session.get("user_type")
-    
-#     if user_type == "Admin":
-#         professional = ServiceProfessional.query.get(user_id)
-#         if professional:
-#             professional.blocked = False
-#             db.session.commit()
-#             flash(f"Professional {professional.name} unblocked successfully!")
-#             return redirect(url_for("admin_dashboard"))
-        
-#     flash("Professional not found.")
-#     return redirect(url_for("admin_dashboard"))
 
 
 
