@@ -348,12 +348,111 @@ def delete_service(service_id):
 
 
 
+# @app.route("/customer/dashboard")
+# def customer_dashboard():
+#     if session.get("user_type") != "Customer":
+#         flash("Please log in as Customer.")
+#         return redirect(url_for("login"))
+#     return render_template("customer_dashboard.html")
+
+
+from datetime import datetime
+
 @app.route("/customer/dashboard")
 def customer_dashboard():
     if session.get("user_type") != "Customer":
         flash("Please log in as Customer.")
         return redirect(url_for("login"))
-    return render_template("customer_dashboard.html")
+
+    customer_id = session["user_id"]
+    customer = Customer.query.get(customer_id)
+
+    # Fetch all service requests for the logged-in customer
+    service_requests = ServiceRequest.query.filter_by(customer_id=customer.id).all()
+
+    # Fetch all available services
+    services = Service.query.all()
+
+    return render_template("customer_dashboard.html", service_requests=service_requests, services=services)
+
+@app.route("/customer/service/create", methods=["GET", "POST"])
+def create_service_request():
+    if session.get("user_type") != "Customer":
+        flash("Please log in as Customer.")
+        return redirect(url_for("login"))
+
+    if request.method == "POST":
+        service_id = request.form.get("service_id")
+        remarks = request.form.get("remarks")
+        date_of_request = datetime.now()
+
+        try:
+            # Create the new service request
+            new_service_request = ServiceRequest(
+                service_id=service_id,
+                customer_id=session["user_id"],
+                date_of_request=date_of_request,
+                remarks=remarks
+            )
+
+            # Add and commit to the database
+            db.session.add(new_service_request)
+            db.session.commit()
+            flash("Service request created successfully!")
+            return redirect(url_for("customer_dashboard"))
+        except Exception as e:
+            db.session.rollback()
+            flash(f"An error occurred: {str(e)}")
+            return redirect(url_for("customer_dashboard"))
+
+    return redirect(url_for("customer_dashboard"))
+
+@app.route("/customer/service/edit/<int:request_id>", methods=["GET", "POST"])
+def edit_service_request(request_id):
+    service_request = ServiceRequest.query.get(request_id)
+
+    if not service_request:
+        flash("Service request not found.")
+        return redirect(url_for("customer_dashboard"))
+
+    if request.method == "POST":
+        service_request.remarks = request.form.get("remarks")
+        service_request.date_of_request = request.form.get("date_of_request")  # Update the date if necessary
+        service_request.service_status = request.form.get("service_status")  # Edit the service status
+
+        try:
+            db.session.commit()
+            flash("Service request updated successfully!")
+            return redirect(url_for("customer_dashboard"))
+        except Exception as e:
+            db.session.rollback()
+            flash(f"An error occurred: {str(e)}")
+            return redirect(url_for("customer_dashboard"))
+
+    return render_template("edit_service_request.html", service_request=service_request)
+
+@app.route("/customer/service/close/<int:request_id>")
+def close_service_request(request_id):
+    service_request = ServiceRequest.query.get(request_id)
+
+    if not service_request:
+        flash("Service request not found.")
+        return redirect(url_for("customer_dashboard"))
+
+    # Set the service request status to closed and add the completion date
+    service_request.service_status = "closed"
+    service_request.date_of_completion = datetime.now()
+
+    try:
+        db.session.commit()
+        flash("Service request closed successfully!")
+    except Exception as e:
+        db.session.rollback()
+        flash(f"An error occurred: {str(e)}")
+
+    return redirect(url_for("customer_dashboard"))
+
+
 
 @app.route("/professional/dashboard")
 def professional_dashboard():
