@@ -1,9 +1,129 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
 </head>
 <body>
-    <h1>Welcome to A to Z Household Admin Dashboard</h1>
+    <h2>Admin Dashboard</h2>
+
+    <h3>Customers</h3>
+    <ul>
+        {% for customer in customers %}
+            <li>{{ customer.name }} - 
+                {% if customer.blocked %}
+                    <a href="{{ url_for('unblock_user', user_id=customer.id) }}">Unblock</a>
+                {% else %}
+                    <a href="{{ url_for('block_user', user_id=customer.id) }}">Block</a>
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+
+    <h3>Professionals</h3>
+    <ul>
+        {% for professional in professionals %}
+            <li>{{ professional.name }} - 
+                {% if not professional.is_approved %}
+                    <a href="{{ url_for('approve_professional', professional_id=professional.id) }}">Approve</a>
+                {% else %}
+                    Approved
+                {% endif %}
+                - 
+                {% if professional.blocked %}
+                    <a href="{{ url_for('unblock_user', user_id=professional.id) }}">Unblock</a>
+                {% else %}
+                    <a href="{{ url_for('block_user', user_id=professional.id) }}">Block</a>
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+
+    <h3>Services</h3>
+    <ul>
+        {% for service in services %}
+            <li>{{ service.name }} - {{ service.base_price }} 
+                <a href="{{ url_for('edit_service', service_id=service.id) }}">Edit</a>
+                <a href="{{ url_for('delete_service', service_id=service.id) }}">Delete</a>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <a href="{{ url_for('create_service') }}">Create New Service</a><br><br>
+    <a href="{{ url_for('logout') }}">Logout</a>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+</head>
+<body>
+    <h2>Admin Dashboard</h2>
+    <h3>Customers</h3>
+    <ul>
+        {% for customer in customers %}
+            <li>{{ customer.name }} - 
+                <a href="{{ url_for('block_user', user_id=customer.id) }}">Block</a>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <h3>Professionals</h3>
+    <ul>
+        {% for professional in professionals %}
+            <li>{{ professional.name }} - 
+                {% if not professional.approved %}
+                    <a href="{{ url_for('approve_professional', professional_id=professional.id) }}">Approve</a>
+                {% else %}
+                    Approved
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+
+    <h3>Services</h3>
+    <ul>
+        {% for service in services %}
+            <li>{{ service.name }} - {{ service.base_price }} 
+                <a href="{{ url_for('edit_service', service_id=service.id) }}">Edit</a>
+                <a href="{{ url_for('delete_service', service_id=service.id) }}">Delete</a>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <a href="{{ url_for('create_service') }}">Create New Service</a><br><br>
+    <a href="{{ url_for('logout') }}">Logout</a>
+</body>
+</html> -->
+

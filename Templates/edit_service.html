@@ -1,0 +1,12 @@
+<form method="POST">
+    <label for="name">Service Name</label>
+    <input type="text" id="name" name="name" value="{{ service.name }}" required><br>
+
+    <label for="base_price">Base Price</label>
+    <input type="text" id="base_price" name="base_price" value="{{ service.base_price }}" required><br>
+
+    <label for="time_required">Time Required</label>
+    <input type="text" id="time_required" name="time_required" value="{{ service.time_required }}" required><br>
+
+    <button type="submit">Update Service</button>
+</form>

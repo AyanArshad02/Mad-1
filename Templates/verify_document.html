@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Professional Document</title>
+</head>
+<body>
+    <h2>Verify Document for {{ professional.name }}</h2>
+    
+    <!-- Display professional details -->
+    <p>Name: {{ professional.name }}</p>
+    <p>Email: {{ professional.email }}</p>
+    <p>Service: {{ professional.service_name }}</p>
+    <p>Experience: {{ professional.experience }} years</p>
+    <p>Address: {{ professional.address }}</p>
+    
+    <!-- Display document (Assuming it's a link to the file) -->
+    <p>Document Path: <a href="{{ professional.document_path }}" target="_blank">View Document</a></p>
+    
+    <form method="POST">
+        <p>Has the document been verified?</p>
+        <button type="submit">Approve Professional</button>
+    </form>
+    
+    <br>
+    <a href="{{ url_for('admin_dashboard') }}">Back to Dashboard</a>
+</body>
+</html>

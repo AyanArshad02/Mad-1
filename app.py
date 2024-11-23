@@ -171,13 +171,240 @@ def load_user(user_id):
     return None
 
 
-
 @app.route("/admin/dashboard", methods=["GET", "POST"])
 def admin_dashboard():
     if session.get("user_type") != "Admin":
         flash("Please log in as Admin.")
         return redirect(url_for("login"))
-    return render_template("admin_dashboard.html")
+    
+    customers = Customer.query.all()
+    professionals = ServiceProfessional.query.all()
+    services = Service.query.all()
+
+    return render_template("admin_dashboard.html", customers=customers, professionals=professionals, services=services)
+
+
+
+@app.route("/admin/approve_professional/<int:professional_id>", methods=["GET", "POST"])
+def approve_professional(professional_id):
+    if session.get("user_type") != "Admin":
+        flash("Please log in as Admin.")
+        return redirect(url_for("login"))
+    
+    professional = ServiceProfessional.query.get_or_404(professional_id)
+    
+    # If the admin is submitting the verification form (POST request)
+    if request.method == "POST":
+        # Here we would verify the document manually
+        # For example, check if the document exists and is valid
+        # You can add additional checks here based on your requirements
+        
+        # For this example, assume the document is verified and approve the professional
+        professional.is_approved = True
+        db.session.commit()
+
+        flash("Service professional approved successfully!")
+        return redirect(url_for("admin_dashboard"))
+
+    # If it's a GET request, show the verification page
+    return render_template("verify_document.html", professional=professional)
+
+
+
+
+@app.route("/admin/block/<int:user_id>")
+def block_user(user_id):
+    user_type = session.get("user_type")
+    
+    # Ensure that you are checking the correct user type and getting the right user
+    if user_type == "Admin":
+        # You need to get the correct model based on the user_type in session
+        customer = Customer.query.get(user_id)
+        if customer:
+            customer.blocked = True
+            db.session.commit()
+            flash(f"Customer {customer.name} blocked successfully!")
+            return redirect(url_for("admin_dashboard"))
+        
+        professional = ServiceProfessional.query.get(user_id)
+        if professional:
+            professional.blocked = True
+            db.session.commit()
+            flash(f"Professional {professional.name} blocked successfully!")
+            return redirect(url_for("admin_dashboard"))
+
+    flash("User not found.")
+    return redirect(url_for("admin_dashboard"))
+
+
+
+
+
+@app.route("/admin/unblock/<int:user_id>")
+def unblock_user(user_id):
+    user_type = session.get("user_type")
+    
+    # Ensure that only Admin can perform this action
+    if user_type == "Admin":
+        customer = Customer.query.get(user_id)
+        if customer:
+            customer.blocked = False
+            db.session.commit()
+            flash(f"Customer {customer.name} unblocked successfully!")
+            return redirect(url_for("admin_dashboard"))
+        
+        professional = ServiceProfessional.query.get(user_id)
+        if professional:
+            professional.blocked = False
+            db.session.commit()
+            flash(f"Professional {professional.name} unblocked successfully!")
+            return redirect(url_for("admin_dashboard"))
+    
+    flash("User not found.")
+    return redirect(url_for("admin_dashboard"))
+
+# @app.route("/admin/block/customer/<int:user_id>")
+# def block_customer(user_id):
+#     user_type = session.get("user_type")
+    
+#     if user_type == "Admin":
+#         customer = Customer.query.get(user_id)
+#         if customer:
+#             customer.blocked = True
+#             db.session.commit()
+#             flash(f"Customer {customer.name} blocked successfully!")
+#             return redirect(url_for("admin_dashboard"))
+        
+#     flash("Customer not found.")
+#     return redirect(url_for("admin_dashboard"))
+
+# @app.route("/admin/unblock/customer/<int:user_id>")
+# def unblock_customer(user_id):
+#     user_type = session.get("user_type")
+    
+#     if user_type == "Admin":
+#         customer = Customer.query.get(user_id)
+#         if customer:
+#             customer.blocked = False
+#             db.session.commit()
+#             flash(f"Customer {customer.name} unblocked successfully!")
+#             return redirect(url_for("admin_dashboard"))
+        
+#     flash("Customer not found.")
+#     return redirect(url_for("admin_dashboard"))
+
+# @app.route("/admin/block/professional/<int:user_id>")
+# def block_professional(user_id):
+#     user_type = session.get("user_type")
+    
+#     if user_type == "Admin":
+#         professional = ServiceProfessional.query.get(user_id)
+#         if professional:
+#             professional.blocked = True
+#             db.session.commit()
+#             flash(f"Professional {professional.name} blocked successfully!")
+#             return redirect(url_for("admin_dashboard"))
+        
+#     flash("Professional not found.")
+#     return redirect(url_for("admin_dashboard"))
+
+# @app.route("/admin/unblock/professional/<int:user_id>")
+# def unblock_professional(user_id):
+#     user_type = session.get("user_type")
+    
+#     if user_type == "Admin":
+#         professional = ServiceProfessional.query.get(user_id)
+#         if professional:
+#             professional.blocked = False
+#             db.session.commit()
+#             flash(f"Professional {professional.name} unblocked successfully!")
+#             return redirect(url_for("admin_dashboard"))
+        
+#     flash("Professional not found.")
+#     return redirect(url_for("admin_dashboard"))
+
+
+
+
+
+
+
+@app.route("/admin/service/create", methods=["GET", "POST"])
+def create_service():
+    if session.get("user_type") != "Admin":
+        flash("Please log in as Admin.")
+        return redirect(url_for("login"))
+
+    if request.method == "POST":
+        name = request.form.get("name")
+        base_price = request.form.get("base_price")
+        description = request.form.get("description")
+        time_required = request.form.get("time_required")
+
+        # Validate the inputs
+        if not name or not base_price or not time_required:
+            flash("All fields except description are required.")
+            return redirect(url_for("create_service"))
+
+        try:
+            # Create the new service record
+            new_service = Service(
+                name=name,
+                base_price=float(base_price),
+                description=description,
+                time_required=time_required
+            )
+
+            # Add and commit to the database
+            db.session.add(new_service)
+            db.session.commit()
+            flash("Service created successfully!")
+            return redirect(url_for("admin_dashboard"))
+        except Exception as e:
+            db.session.rollback()
+            flash(f"An error occurred: {str(e)}")
+            return redirect(url_for("create_service"))
+
+    return render_template("create_service.html")
+
+
+
+@app.route("/admin/service/edit/<int:service_id>", methods=["GET", "POST"])
+def edit_service(service_id):
+    service = Service.query.get(service_id)
+    if not service:
+        flash("Service not found.")
+        return redirect(url_for("admin_dashboard"))
+
+    if request.method == "POST":
+        service.name = request.form.get("name")
+        service.base_price = request.form.get("base_price")
+        service.time_required = request.form.get("time_required")
+
+        try:
+            db.session.commit()
+            flash("Service updated successfully!")
+            return redirect(url_for("admin_dashboard"))
+        except Exception as e:
+            db.session.rollback()
+            flash(f"An error occurred: {str(e)}")
+            return redirect(url_for("admin_dashboard"))
+
+    return render_template("edit_service.html", service=service)
+
+
+@app.route("/admin/service/delete/<int:service_id>")
+def delete_service(service_id):
+    service = Service.query.get(service_id)
+    if service:
+        db.session.delete(service)
+        db.session.commit()
+        flash("Service deleted successfully!")
+    else:
+        flash("Service not found.")
+    return redirect(url_for("admin_dashboard"))
+
+
 
 
 @app.route("/customer/dashboard")

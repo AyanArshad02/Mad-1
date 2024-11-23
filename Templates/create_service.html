@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create New Service</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            margin: 10px 0 5px;
+            color: #555;
+            font-weight: bold;
+        }
+        input, textarea {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        button {
+            background-color: #5cb85c;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            margin-top: 20px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #4cae4c;
+        }
+        a {
+            text-decoration: none;
+            color: #5cb85c;
+            font-weight: bold;
+            text-align: center;
+            display: block;
+            margin-top: 15px;
+        }
+        a:hover {
+            color: #4cae4c;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Create New Service</h2>
+        <form method="POST">
+            <label for="name">Service Name</label>
+            <input type="text" id="name" name="name" placeholder="Enter service name" required>
+
+            <label for="base_price">Base Price</label>
+            <input type="number" step="0.01" id="base_price" name="base_price" placeholder="Enter base price" required>
+
+            <label for="description">Description</label>
+            <textarea id="description" name="description" placeholder="Enter service description"></textarea>
+
+            <label for="time_required">Time Required</label>
+            <input type="text" id="time_required" name="time_required" placeholder="Enter time required (e.g., 1 hour)" required>
+
+            <button type="submit">Create Service</button>
+        </form>
+
+        <a href="{{ url_for('admin_dashboard') }}">Back to Admin Dashboard</a>
+    </div>
+</body>
+</html>
+
+

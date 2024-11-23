@@ -16,6 +16,7 @@ class Customer(db.Model):
     password = db.Column(db.String(50), nullable=False)
     address = db.Column(db.Text, nullable=False)
     pincode = db.Column(db.String(6), nullable=False)
+    blocked = db.Column(db.Boolean, default=False)
     service_requests = db.relationship("ServiceRequest", backref="customer", lazy=True)
 
 
@@ -29,6 +30,8 @@ class ServiceProfessional(db.Model):
     document_path = db.Column(db.String(200), nullable=False)  # Store the path of the uploaded document
     address = db.Column(db.Text, nullable=False)
     pincode = db.Column(db.String(6), nullable=False)
+    blocked = db.Column(db.Boolean, default=False)  # Add this line
+    is_approved = db.Column(db.Boolean, default=False, nullable=False)  # Add this line for approval status
     service_requests = db.relationship("ServiceRequest", backref="professional", lazy=True)
 
 
