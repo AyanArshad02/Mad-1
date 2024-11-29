@@ -485,7 +485,9 @@ def professional_dashboard():
     if session.get("user_type") != "Professional":
         flash("Please log in as Professional.")
         return redirect(url_for("login"))
-    return render_template("professional_dashboard.html")
+    
+    service_requests = ServiceRequest.query.all()
+    return render_template('professional_dashboard.html', service_requests=service_requests)
 
 @app.route("/logout")
 def logout():
