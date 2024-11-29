@@ -15,9 +15,12 @@
     <p>Experience: {{ professional.experience }} years</p>
     <p>Address: {{ professional.address }}</p>
     
-    <!-- Display document (Assuming it's a link to the file) -->
-    <p>Document Path: <a href="{{ professional.document_path }}" target="_blank">View Document</a></p>
-    
+    <p>Document: 
+        <a href="{{ url_for('serve_document', filename=professional.document_path.split('/')[-1]) }}" target="_blank">
+          View Document
+        </a>
+      </p>      
+          
     <form method="POST">
         <p>Has the document been verified?</p>
         <button type="submit">Approve Professional</button>

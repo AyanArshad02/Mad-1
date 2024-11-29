@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, session, f
 from werkzeug.utils import secure_filename
 import os
 from datetime import datetime
+from flask import send_from_directory
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from model.model import db, Admin, Customer, ServiceProfessional, Service, ServiceRequest
 
@@ -185,6 +186,38 @@ def admin_dashboard():
     return render_template("admin_dashboard.html", customers=customers, professionals=professionals, services=services)
 
 
+@app.route('/uploads/<filename>')
+def serve_document(filename):
+    # Assumes documents are stored in an 'uploads' folder within the project
+    return send_from_directory('uploads', filename)
+
+
+# @app.route("/admin/approve_professional/<int:professional_id>", methods=["GET", "POST"])
+# def approve_professional(professional_id):
+#     if session.get("user_type") != "Admin":
+#         flash("Please log in as Admin.")
+#         return redirect(url_for("login"))
+    
+#     professional = ServiceProfessional.query.get_or_404(professional_id)
+    
+#     # If the admin is submitting the verification form (POST request)
+#     if request.method == "POST":
+#         # Here we would verify the document manually
+#         # For example, check if the document exists and is valid
+#         # You can add additional checks here based on your requirements
+        
+#         # For this example, assume the document is verified and approve the professional
+#         professional.is_approved = True
+#         db.session.commit()
+
+#         flash("Service professional approved successfully!")
+#         return redirect(url_for("admin_dashboard"))
+
+#     # If it's a GET request, show the verification page
+#     return render_template("verify_document.html", professional=professional)
+
+
+import os
 
 @app.route("/admin/approve_professional/<int:professional_id>", methods=["GET", "POST"])
 def approve_professional(professional_id):
@@ -193,14 +226,16 @@ def approve_professional(professional_id):
         return redirect(url_for("login"))
     
     professional = ServiceProfessional.query.get_or_404(professional_id)
-    
-    # If the admin is submitting the verification form (POST request)
+
     if request.method == "POST":
-        # Here we would verify the document manually
-        # For example, check if the document exists and is valid
-        # You can add additional checks here based on your requirements
+        document_path = os.path.join('uploads', professional.document_filename)
+
+        # Check if the document exists
+        if not os.path.exists(document_path):
+            flash("Document not found. Approval failed.")
+            return redirect(url_for("approve_professional", professional_id=professional_id))
         
-        # For this example, assume the document is verified and approve the professional
+        # Approve the professional
         professional.is_approved = True
         db.session.commit()
 
@@ -209,7 +244,6 @@ def approve_professional(professional_id):
 
     # If it's a GET request, show the verification page
     return render_template("verify_document.html", professional=professional)
-
 
 
 
