@@ -10,6 +10,100 @@
     <a href="{{ url_for('logout') }}">Logout</a>
 
     <h2>Your Service Requests</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Service Name</th>
+                <th>Request Date</th>
+                <th>Status</th>
+                <th>Completion Date</th>
+                <th>Remarks</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for request in service_requests %}
+                <tr>
+                    <td>{{ request.service.name }}</td>
+                    <td>{{ request.date_of_request }}</td>
+                    <td>{{ request.service_status }}</td>
+                    <td>{{ request.date_of_completion or 'Not Completed' }}</td>
+                    <td>{{ request.remarks or 'No Remarks' }}</td>
+                    <td>
+                        <a href="{{ url_for('edit_service_request', request_id=request.id) }}">Edit</a> | 
+                        <a href="{{ url_for('close_service_request', request_id=request.id) }}" onclick="return confirm('Are you sure you want to close this request?')">Close</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h2>Create a New Service Request</h2>
+    <form action="{{ url_for('create_service_request') }}" method="POST">
+        <label for="service">Select Service:</label>
+        <select name="service_id" id="service">
+            {% for service in services %}
+                <option value="{{ service.id }}">{{ service.name }}</option>
+            {% endfor %}
+        </select>
+        <br><br>
+        <label for="remarks">Remarks:</label>
+        <textarea name="remarks" id="remarks"></textarea>
+        <br><br>
+        <button type="submit">Create Request</button>
+    </form>
+
+    <!-- Search Services Form
+    <h2>Search Available Services</h2>
+    <form action="{{ url_for('customer_dashboard') }}" method="GET">
+        <input type="text" name="query" placeholder="Search by service name, professional name, address, or pin code" value="{{ request.args.get('query', '') }}">
+        <button type="submit">Search</button>
+    </form> -->
+
+    <!-- <h3>Available Services</h3>
+    {% if services %}
+        <ul>
+            {% for service in services %}
+                <li>
+                    {{ service.name }} 
+                    {% if service.professional %}
+                        - Provided by: {{ service.professional.name }} 
+                        - Address: {{ service.professional.address }} 
+                        - Pincode: {{ service.professional.pincode }}
+                    {% else %}
+                        - <em>No professional assigned</em>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No services found matching your criteria.</p>
+    {% endif %} -->
+    
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Dashboard</title>
+</head>
+<body>
+    <h1>Welcome to the Customer Dashboard</h1>
+    <a href="{{ url_for('logout') }}">Logout</a>
+
+    <h2>Your Service Requests</h2>
 
     <table border="1">
         <thead>
@@ -55,7 +149,7 @@
     </form>
     
 
-   <!-- <h2>Search Services</h2>
+   <h2>Search Services</h2>
 <form action="{{ url_for('customer_dashboard') }}" method="GET">
     <input type="text" name="query" placeholder="Search by service name, professional name, address, or pin code" required>
     <button type="submit">Search</button>

@@ -351,7 +351,39 @@ def delete_service(service_id):
 
 from datetime import datetime
 
-@app.route("/customer/dashboard")
+# @app.route("/customer/dashboard")
+# def customer_dashboard():
+#     if session.get("user_type") != "Customer":
+#         flash("Please log in as Customer.")
+#         return redirect(url_for("login"))
+
+#     customer_id = session["user_id"]
+#     customer = Customer.query.get(customer_id)
+
+#     # Fetch all service requests for the logged-in customer
+#     service_requests = ServiceRequest.query.filter_by(customer_id=customer.id).all()
+
+#     # Fetch all available services
+#     services = Service.query.all()
+
+#     # query = request.args.get('query', '').strip()
+#     # if query:
+#     #     # Perform a case-insensitive search across service name, professional address, and pincode
+#     #     services = Service.query.join(ServiceProfessional).filter(
+#     #         db.or_(
+#     #             Service.name.ilike(f"%{query}%"),
+#     #             ServiceProfessional.address.ilike(f"%{query}%"),
+#     #             ServiceProfessional.pincode.ilike(f"%{query}%")
+#     #         )
+#     #     ).all()
+#     # else:
+#     #     # Show all services if no query
+#     #     services = Service.query.all()
+
+#     return render_template("customer_dashboard.html", service_requests=service_requests, services=services)
+
+
+@app.route("/customer/dashboard", methods=["GET", "POST"])
 def customer_dashboard():
     if session.get("user_type") != "Customer":
         flash("Please log in as Customer.")
@@ -366,24 +398,7 @@ def customer_dashboard():
     # Fetch all available services
     services = Service.query.all()
 
-    # query = request.args.get('query', '').strip()
-    # if query:
-    #     # Perform a case-insensitive search across service name, professional address, and pincode
-    #     services = Service.query.join(ServiceProfessional).filter(
-    #         db.or_(
-    #             Service.name.ilike(f"%{query}%"),
-    #             ServiceProfessional.address.ilike(f"%{query}%"),
-    #             ServiceProfessional.pincode.ilike(f"%{query}%")
-    #         )
-    #     ).all()
-    # else:
-    #     # Show all services if no query
-    #     services = Service.query.all()
-
     return render_template("customer_dashboard.html", service_requests=service_requests, services=services)
-
-
-
 
 
 @app.route("/customer/service/create", methods=["GET", "POST"])
