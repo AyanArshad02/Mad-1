@@ -1,12 +1,23 @@
-<form method="POST">
-    <label for="name">Service Name</label>
-    <input type="text" id="name" name="name" value="{{ service.name }}" required><br>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Service</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='edit_service.css') }}">
+</head>
+<body>
+    <form method="POST">
+        <label for="name">Service Name</label>
+        <input type="text" id="name" name="name" value="{{ service.name }}" required>
 
-    <label for="base_price">Base Price</label>
-    <input type="text" id="base_price" name="base_price" value="{{ service.base_price }}" required><br>
+        <label for="base_price">Base Price</label>
+        <input type="text" id="base_price" name="base_price" value="{{ service.base_price }}" required>
 
-    <label for="time_required">Time Required</label>
-    <input type="text" id="time_required" name="time_required" value="{{ service.time_required }}" required><br>
+        <label for="time_required">Time Required</label>
+        <input type="text" id="time_required" name="time_required" value="{{ service.time_required }}" required>
 
-    <button type="submit">Update Service</button>
-</form>
+        <button type="submit">Update Service</button>
+    </form>
+</body>
+</html>

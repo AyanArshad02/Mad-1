@@ -4,52 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Service Professional Dashboard</title>
-    <style>
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-        .action-button {
-            padding: 5px 10px;
-            margin: 2px;
-            color: white;
-            border: none;
-            cursor: pointer;
-            border-radius: 5px;
-        }
-        .accept-button {
-            background-color: green;
-        }
-        .reject-button {
-            background-color: red;
-        }
-        .logout-button {
-            padding: 8px 12px;
-            background-color: #ff6347;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-            position: absolute;
-            top: 10px;
-            right: 10px;
-        }
-        .flash-message {
-            padding: 10px;
-            background-color: #f0f8ff;
-            color: #333;
-            border: 1px solid #ccc;
-            margin-bottom: 10px;
-            border-radius: 5px;
-        }
-    </style>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='professional_dashboard.css') }}">
 </head>
 <body>
     <a href="{{ url_for('logout') }}" class="logout-button">Logout</a>
