@@ -192,33 +192,6 @@ def serve_document(filename):
     return send_from_directory('uploads', filename)
 
 
-# @app.route("/admin/approve_professional/<int:professional_id>", methods=["GET", "POST"])
-# def approve_professional(professional_id):
-#     if session.get("user_type") != "Admin":
-#         flash("Please log in as Admin.")
-#         return redirect(url_for("login"))
-    
-#     professional = ServiceProfessional.query.get_or_404(professional_id)
-    
-#     # If the admin is submitting the verification form (POST request)
-#     if request.method == "POST":
-#         # Here we would verify the document manually
-#         # For example, check if the document exists and is valid
-#         # You can add additional checks here based on your requirements
-        
-#         # For this example, assume the document is verified and approve the professional
-#         professional.is_approved = True
-#         db.session.commit()
-
-#         flash("Service professional approved successfully!")
-#         return redirect(url_for("admin_dashboard"))
-
-#     # If it's a GET request, show the verification page
-#     return render_template("verify_document.html", professional=professional)
-
-
-import os
-
 @app.route("/admin/approve_professional/<int:professional_id>", methods=["GET", "POST"])
 def approve_professional(professional_id):
     if session.get("user_type") != "Admin":
