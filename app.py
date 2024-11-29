@@ -188,35 +188,10 @@ def admin_dashboard():
 
 @app.route('/uploads/<filename>')
 def serve_document(filename):
-    # Assumes documents are stored in an 'uploads' folder within the project
+    # documents are stored in an 'uploads' folder within the project
     return send_from_directory('uploads', filename)
 
 
-# @app.route("/admin/approve_professional/<int:professional_id>", methods=["GET", "POST"])
-# def approve_professional(professional_id):
-#     if session.get("user_type") != "Admin":
-#         flash("Please log in as Admin.")
-#         return redirect(url_for("login"))
-    
-#     professional = ServiceProfessional.query.get_or_404(professional_id)
-
-#     if request.method == "POST":
-#         document_path = os.path.join('uploads', professional.document_filename)
-
-#         # Check if the document exists
-#         if not os.path.exists(document_path):
-#             flash("Document not found. Approval failed.")
-#             return redirect(url_for("approve_professional", professional_id=professional_id))
-        
-#         # Approve the professional
-#         professional.is_approved = True
-#         db.session.commit()
-
-#         flash("Service professional approved successfully!")
-#         return redirect(url_for("admin_dashboard"))
-
-#     # If it's a GET request, show the verification page
-#     return render_template("verify_document.html", professional=professional)
 
 
 @app.route("/admin/approve_professional/<int:professional_id>", methods=["GET", "POST"])
@@ -227,20 +202,14 @@ def approve_professional(professional_id):
 
     professional = ServiceProfessional.query.get_or_404(professional_id)
 
-    # If the admin is submitting the verification form (POST request)
     if request.method == "POST":
-        # Here we would verify the document manually
-        # For example, check if the document exists and is valid
-        # You can add additional checks here based on your requirements
 
-        # For this example, assume the document is verified and approve the professional
         professional.is_approved = True
         db.session.commit()
 
         flash("Service professional approved successfully!")
         return redirect(url_for("admin_dashboard"))
 
-    # If it's a GET request, show the verification page
     return render_template("verify_document.html", professional=professional)
 
 
@@ -249,9 +218,7 @@ def approve_professional(professional_id):
 def block_user(user_id):
     user_type = session.get("user_type")
     
-    # Ensure that you are checking the correct user type and getting the right user
     if user_type == "Admin":
-        # You need to get the correct model based on the user_type in session
         customer = Customer.query.get(user_id)
         if customer:
             customer.blocked = True
@@ -274,7 +241,6 @@ def block_user(user_id):
 def unblock_user(user_id):
     user_type = session.get("user_type")
     
-    # Ensure that only Admin can perform this action
     if user_type == "Admin":
         customer = Customer.query.get(user_id)
         if customer:
@@ -310,7 +276,6 @@ def create_service():
         description = request.form.get("description")
         time_required = request.form.get("time_required")
 
-        # Validate the inputs
         if not name or not base_price or not time_required:
             flash("All fields except description are required.")
             return redirect(url_for("create_service"))
@@ -383,10 +348,10 @@ def customer_dashboard():
     customer_id = session["user_id"]
     customer = Customer.query.get(customer_id)
 
-    # Fetch all service requests for the logged-in customer
+    # Fetching all service requests for the logged-in customer
     service_requests = ServiceRequest.query.filter_by(customer_id=customer.id).all()
 
-    # Fetch all available services
+    # Fetching all available services
     services = Service.query.all()
 
     return render_template("customer_dashboard.html", service_requests=service_requests, services=services)
@@ -500,7 +465,7 @@ def update_request(request_id, action):
 
 @app.route("/logout")
 def logout():
-    session.clear()  # Clear all session data
+    session.clear()
     flash("Logged out successfully.")
     return redirect(url_for("login"))
 
