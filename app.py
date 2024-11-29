@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from werkzeug.utils import secure_filename
 import os
+from datetime import datetime
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from model.model import db, Admin, Customer, ServiceProfessional, Service, ServiceRequest
 
@@ -41,8 +42,8 @@ def login():
         user_type = request.form.get("user_type")  # Admin, Customer, Professional
 
         if user_type == "Admin":
-            # Hardcoded Admin credentials (Change this as needed)
-            if username == "admin" and password == "admin123":  # Example credentials
+            # Hardcoded Admin credentials
+            if username == "admin" and password == "admin123":
                 session.clear()
                 session["user_id"] = "admin"  # Set a special ID for admin
                 session["user_type"] = "Admin"
@@ -237,9 +238,6 @@ def block_user(user_id):
     return redirect(url_for("admin_dashboard"))
 
 
-
-
-
 @app.route("/admin/unblock/<int:user_id>")
 def unblock_user(user_id):
     user_type = session.get("user_type")
@@ -262,12 +260,6 @@ def unblock_user(user_id):
     
     flash("User not found.")
     return redirect(url_for("admin_dashboard"))
-
-
-
-
-
-
 
 
 @app.route("/admin/service/create", methods=["GET", "POST"])
@@ -344,43 +336,6 @@ def delete_service(service_id):
     else:
         flash("Service not found.")
     return redirect(url_for("admin_dashboard"))
-
-
-
-
-
-from datetime import datetime
-
-# @app.route("/customer/dashboard")
-# def customer_dashboard():
-#     if session.get("user_type") != "Customer":
-#         flash("Please log in as Customer.")
-#         return redirect(url_for("login"))
-
-#     customer_id = session["user_id"]
-#     customer = Customer.query.get(customer_id)
-
-#     # Fetch all service requests for the logged-in customer
-#     service_requests = ServiceRequest.query.filter_by(customer_id=customer.id).all()
-
-#     # Fetch all available services
-#     services = Service.query.all()
-
-#     # query = request.args.get('query', '').strip()
-#     # if query:
-#     #     # Perform a case-insensitive search across service name, professional address, and pincode
-#     #     services = Service.query.join(ServiceProfessional).filter(
-#     #         db.or_(
-#     #             Service.name.ilike(f"%{query}%"),
-#     #             ServiceProfessional.address.ilike(f"%{query}%"),
-#     #             ServiceProfessional.pincode.ilike(f"%{query}%")
-#     #         )
-#     #     ).all()
-#     # else:
-#     #     # Show all services if no query
-#     #     services = Service.query.all()
-
-#     return render_template("customer_dashboard.html", service_requests=service_requests, services=services)
 
 
 @app.route("/customer/dashboard", methods=["GET", "POST"])
@@ -488,6 +443,24 @@ def professional_dashboard():
     
     service_requests = ServiceRequest.query.all()
     return render_template('professional_dashboard.html', service_requests=service_requests)
+
+
+@app.route('/update_request/<int:request_id>/<string:action>', methods=['POST'])
+def update_request(request_id, action):
+    request = ServiceRequest.query.get_or_404(request_id)
+    
+    if action == 'accept':
+        request.service_status = 'accepted'
+    elif action == 'reject':
+        request.service_status = 'rejected'
+    elif action == 'close':
+        request.service_status = 'completed'
+        request.date_of_completion = datetime.utcnow()  # Set completion date
+    
+    db.session.commit()
+    flash(f'Service request {action} successfully!', 'success')
+    return redirect(url_for('professional_dashboard'))
+
 
 @app.route("/logout")
 def logout():
